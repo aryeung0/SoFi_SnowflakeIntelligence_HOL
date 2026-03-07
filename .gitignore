@@ -1,0 +1,7 @@
+gen_docx.py
+HOL_GUIDE.docx
+FACILITATOR_SCRIPT.md
+prompt.md
+*.pyc
+__pycache__/
+.DS_Store

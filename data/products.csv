@@ -1,0 +1,13 @@
+product_id,product_name,category,risk_tier,launch_date
+1,Personal Loan - Prime,Personal Loans,Prime,2018-03-15
+2,Personal Loan - Near Prime,Personal Loans,Near Prime,2018-03-15
+3,Personal Loan - Subprime,Personal Loans,Subprime,2019-06-01
+4,Student Loan Refi - Variable,Student Loan Refinancing,Prime,2017-01-10
+5,Student Loan Refi - Fixed,Student Loan Refinancing,Prime,2017-01-10
+6,Student Loan Refi - Hybrid,Student Loan Refinancing,Near Prime,2020-09-01
+7,Home Loan - 30yr Fixed,Home Loans,Prime,2019-11-01
+8,Home Loan - 15yr Fixed,Home Loans,Prime,2019-11-01
+9,Home Loan - ARM 5/1,Home Loans,Near Prime,2020-03-15
+10,Credit Card - Essential,Credit Cards,Near Prime,2021-04-01
+11,Credit Card - Premium,Credit Cards,Prime,2021-04-01
+12,Credit Card - Secured,Credit Cards,Subprime,2022-01-15

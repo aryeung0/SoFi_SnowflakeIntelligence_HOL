@@ -1,0 +1,319 @@
+name: Risk_Data_Model
+tables:
+  - name: PRODUCTS
+    base_table:
+      database: SOFI_DB_SI
+      schema: FINANCIAL
+      table: PRODUCTS
+    description: Reference table of SoFi financial products including personal loans, student loan refinancing, home loans, and credit cards. Each product has a risk tier classification and launch date.
+    columns:
+      - name: PRODUCT_ID
+        data_type: NUMBER
+        description: Unique identifier for each financial product
+        synonyms:
+          - product identifier
+          - product key
+        unique: true
+      - name: PRODUCT_NAME
+        data_type: VARCHAR
+        description: Full descriptive name of the financial product
+        synonyms:
+          - product
+          - loan product
+          - product label
+      - name: CATEGORY
+        data_type: VARCHAR
+        description: Product category grouping (Personal Loans, Student Loan Refinancing, Home Loans, Credit Cards)
+        synonyms:
+          - product category
+          - product type
+          - loan type
+          - segment
+      - name: RISK_TIER
+        data_type: VARCHAR
+        description: Credit risk classification of the product (Prime, Near Prime, Subprime)
+        synonyms:
+          - risk level
+          - credit tier
+          - risk segment
+          - risk class
+      - name: LAUNCH_DATE
+        data_type: DATE
+        description: Date the product was launched
+
+  - name: LOAN_ORIGINATIONS
+    base_table:
+      database: SOFI_DB_SI
+      schema: FINANCIAL
+      table: LOAN_ORIGINATIONS
+    description: Daily loan origination activity including application volume, approval and denial counts, and funded amounts broken down by region and product.
+    columns:
+      - name: DATE
+        data_type: DATE
+        description: Date of the origination activity
+        synonyms:
+          - origination date
+          - day
+      - name: REGION
+        data_type: VARCHAR
+        description: Geographic region (West, East, South, Midwest)
+        synonyms:
+          - geography
+          - geo
+          - area
+          - market
+      - name: PRODUCT_ID
+        data_type: NUMBER
+        description: Foreign key to the PRODUCTS table
+      - name: APPLICATIONS
+        data_type: NUMBER
+        description: Number of loan applications received
+        synonyms:
+          - apps
+          - application volume
+          - application count
+          - submissions
+      - name: APPROVALS
+        data_type: NUMBER
+        description: Number of applications approved
+        synonyms:
+          - approved
+          - approval count
+          - approved applications
+      - name: DENIALS
+        data_type: NUMBER
+        description: Number of applications denied
+        synonyms:
+          - denied
+          - denial count
+          - rejected
+          - rejections
+      - name: FUNDED_AMOUNT
+        data_type: NUMBER
+        description: Total dollar amount of funded loans
+        synonyms:
+          - origination amount
+          - loan amount
+          - funded dollars
+          - origination volume dollars
+          - disbursement amount
+
+  - name: LOAN_PERFORMANCE
+    base_table:
+      database: SOFI_DB_SI
+      schema: FINANCIAL
+      table: LOAN_PERFORMANCE
+    description: Monthly portfolio performance snapshots showing outstanding balances, delinquency buckets (30/60/90+ days past due), and charge-off amounts by product and vintage.
+    columns:
+      - name: SNAPSHOT_DATE
+        data_type: DATE
+        description: First day of the month for this performance snapshot
+        synonyms:
+          - report date
+          - as of date
+          - month
+      - name: PRODUCT_ID
+        data_type: NUMBER
+        description: Foreign key to the PRODUCTS table
+      - name: VINTAGE
+        data_type: VARCHAR
+        description: Origination vintage in YYYY-QN format (e.g., 2024-Q1). Represents when the loans were originally issued.
+        synonyms:
+          - origination vintage
+          - cohort
+          - origination quarter
+          - vintage quarter
+      - name: OUTSTANDING_BALANCE
+        data_type: NUMBER
+        description: Total outstanding principal balance of loans in this segment
+        synonyms:
+          - balance
+          - principal balance
+          - exposure
+          - outstanding
+          - book size
+      - name: CURRENT_COUNT
+        data_type: NUMBER
+        description: Number of loans that are current (not delinquent)
+        synonyms:
+          - current loans
+          - performing loans
+          - non-delinquent
+      - name: DPD_30
+        data_type: NUMBER
+        description: Number of loans 30 days past due
+        synonyms:
+          - 30 day delinquent
+          - 30 dpd
+          - early delinquency
+          - 30 days late
+      - name: DPD_60
+        data_type: NUMBER
+        description: Number of loans 60 days past due
+        synonyms:
+          - 60 day delinquent
+          - 60 dpd
+          - 60 days late
+      - name: DPD_90_PLUS
+        data_type: NUMBER
+        description: Number of loans 90 or more days past due
+        synonyms:
+          - 90 plus delinquent
+          - 90 dpd
+          - seriously delinquent
+          - severe delinquency
+          - 90 days late
+      - name: CHARGEOFF_AMOUNT
+        data_type: NUMBER
+        description: Dollar amount of loans charged off during this period
+        synonyms:
+          - charge-off
+          - losses
+          - write-off
+          - net charge-off
+          - credit losses
+
+  - name: DATA_QUALITY_METRICS
+    base_table:
+      database: SOFI_DB_SI
+      schema: FINANCIAL
+      table: DATA_QUALITY_METRICS
+    description: Daily data quality and pipeline health metrics for key risk tables. Tracks row counts, data freshness, dbt test results, null rates, and schema changes. Used by the Risk Data Team to monitor pipeline reliability and data integrity.
+    columns:
+      - name: DATE
+        data_type: DATE
+        description: Date of the data quality measurement
+        synonyms:
+          - measurement date
+          - check date
+      - name: TABLE_NAME
+        data_type: VARCHAR
+        description: Name of the monitored table (e.g., LOAN_ORIGINATIONS, CREDIT_DECISIONS, BORROWER_PROFILES)
+        synonyms:
+          - table
+          - dataset
+          - source table
+      - name: ROW_COUNT
+        data_type: NUMBER
+        description: Total number of rows in the table at time of measurement
+        synonyms:
+          - record count
+          - number of rows
+          - table size
+      - name: LAST_UPDATED_AT
+        data_type: TIMESTAMP
+        description: Timestamp of the most recent data update to the table
+        synonyms:
+          - last refresh
+          - last update
+          - last load time
+      - name: FRESHNESS_HOURS
+        data_type: NUMBER
+        description: Number of hours since the table was last updated. Lower is better. Values above normal thresholds indicate pipeline delays.
+        synonyms:
+          - data freshness
+          - staleness
+          - hours since update
+          - data lag
+          - latency
+      - name: DBT_TESTS_PASSED
+        data_type: NUMBER
+        description: Number of dbt data quality tests that passed
+        synonyms:
+          - tests passed
+          - passing tests
+          - successful tests
+      - name: DBT_TESTS_FAILED
+        data_type: NUMBER
+        description: Number of dbt data quality tests that failed. Non-zero values indicate data quality issues.
+        synonyms:
+          - tests failed
+          - failing tests
+          - test failures
+          - broken tests
+      - name: NULL_RATE_PCT
+        data_type: NUMBER
+        description: Percentage of null values across key columns in the table. Higher values may indicate missing data or pipeline issues.
+        synonyms:
+          - null rate
+          - null percentage
+          - missing data rate
+          - completeness
+      - name: SCHEMA_CHANGES
+        data_type: NUMBER
+        description: Number of schema changes detected on this date (0 or 1). Schema changes can indicate upstream modifications that may break downstream pipelines.
+        synonyms:
+          - schema drift
+          - schema modifications
+          - ddl changes
+
+relationships:
+  - name: ORIGINATIONS_TO_PRODUCTS
+    left_table: LOAN_ORIGINATIONS
+    left_column: PRODUCT_ID
+    right_table: PRODUCTS
+    right_column: PRODUCT_ID
+    join_type: many_to_one
+    relationship_columns:
+      - left_column: PRODUCT_ID
+        right_column: PRODUCT_ID
+  - name: PERFORMANCE_TO_PRODUCTS
+    left_table: LOAN_PERFORMANCE
+    left_column: PRODUCT_ID
+    right_table: PRODUCTS
+    right_column: PRODUCT_ID
+    join_type: many_to_one
+    relationship_columns:
+      - left_column: PRODUCT_ID
+        right_column: PRODUCT_ID
+
+verified_queries:
+  - question: What is the trend in personal loan origination volume over the last 6 months?
+    sql: |
+      SELECT
+        lo.DATE,
+        SUM(lo.APPLICATIONS) AS total_applications,
+        SUM(lo.APPROVALS) AS total_approvals,
+        SUM(lo.FUNDED_AMOUNT) AS total_funded
+      FROM SOFI_DB_SI.FINANCIAL.LOAN_ORIGINATIONS lo
+      JOIN SOFI_DB_SI.FINANCIAL.PRODUCTS p ON lo.PRODUCT_ID = p.PRODUCT_ID
+      WHERE p.CATEGORY = 'Personal Loans'
+        AND lo.DATE >= DATEADD('month', -6, CURRENT_DATE())
+      GROUP BY lo.DATE
+      ORDER BY lo.DATE
+  - question: Which product category has the highest 90+ day delinquency rate?
+    sql: |
+      SELECT
+        p.CATEGORY,
+        SUM(lp.DPD_90_PLUS) AS total_90_plus,
+        SUM(lp.CURRENT_COUNT + lp.DPD_30 + lp.DPD_60 + lp.DPD_90_PLUS) AS total_loans,
+        ROUND(SUM(lp.DPD_90_PLUS) * 100.0 / NULLIF(SUM(lp.CURRENT_COUNT + lp.DPD_30 + lp.DPD_60 + lp.DPD_90_PLUS), 0), 2) AS delinquency_rate_pct
+      FROM SOFI_DB_SI.FINANCIAL.LOAN_PERFORMANCE lp
+      JOIN SOFI_DB_SI.FINANCIAL.PRODUCTS p ON lp.PRODUCT_ID = p.PRODUCT_ID
+      WHERE lp.SNAPSHOT_DATE = (SELECT MAX(SNAPSHOT_DATE) FROM SOFI_DB_SI.FINANCIAL.LOAN_PERFORMANCE)
+      GROUP BY p.CATEGORY
+      ORDER BY delinquency_rate_pct DESC
+  - question: Which tables had dbt test failures this week?
+    sql: |
+      SELECT
+        TABLE_NAME,
+        DATE,
+        DBT_TESTS_FAILED,
+        DBT_TESTS_PASSED,
+        NULL_RATE_PCT
+      FROM SOFI_DB_SI.FINANCIAL.DATA_QUALITY_METRICS
+      WHERE DBT_TESTS_FAILED > 0
+        AND DATE >= DATEADD('day', -7, CURRENT_DATE())
+      ORDER BY DATE DESC, DBT_TESTS_FAILED DESC
+  - question: How does the approval rate compare across regions for home loans?
+    sql: |
+      SELECT
+        lo.REGION,
+        SUM(lo.APPLICATIONS) AS total_applications,
+        SUM(lo.APPROVALS) AS total_approvals,
+        ROUND(SUM(lo.APPROVALS) * 100.0 / NULLIF(SUM(lo.APPLICATIONS), 0), 2) AS approval_rate_pct
+      FROM SOFI_DB_SI.FINANCIAL.LOAN_ORIGINATIONS lo
+      JOIN SOFI_DB_SI.FINANCIAL.PRODUCTS p ON lo.PRODUCT_ID = p.PRODUCT_ID
+      WHERE p.CATEGORY = 'Home Loans'
+      GROUP BY lo.REGION
+      ORDER BY approval_rate_pct DESC
