@@ -3,9 +3,10 @@
 -- SoFi Risk Data Team
 -- ============================================================
 --
+-- Run this from INSIDE the Git-enabled workspace.
+-- Prerequisite: bootstrap.sql has already been run.
+--
 -- Objects created:
---   Role:       snowflake_intelligence_admin
---   Warehouse:  sofi_wh_si
 --   Database:   sofi_db_si (schema: financial)
 --   Database:   snowflake_intelligence (schema: agents)
 --   Tables:     products, loan_originations, loan_performance, data_quality_metrics
@@ -13,25 +14,17 @@
 --   Procedure:  send_email
 --   Integration: email_integration
 --
--- Data loading: CSV files are loaded via Snowsight UI after running this script.
+-- Data is loaded from the Git repository stage (no CSV upload needed).
 -- ============================================================
 
-use role accountadmin;
-
-create or replace role snowflake_intelligence_admin;
-grant create warehouse on account to role snowflake_intelligence_admin;
-grant create database on account to role snowflake_intelligence_admin;
-grant create integration on account to role snowflake_intelligence_admin;
-
-set current_user = (select current_user());   
-grant role snowflake_intelligence_admin to user identifier($current_user);
-alter user set default_role = snowflake_intelligence_admin;
-alter user set default_warehouse = sofi_wh_si;
-
 use role snowflake_intelligence_admin;
+
+-- ============================================================
+-- Database & Schema
+-- ============================================================
+
 create or replace database sofi_db_si;
 create or replace schema financial;
-create or replace warehouse sofi_wh_si with warehouse_size='large';
 
 create database if not exists snowflake_intelligence;
 create schema if not exists snowflake_intelligence.agents;
@@ -90,7 +83,50 @@ create or replace table data_quality_metrics (
 );
 
 -- ============================================================
--- Stage for semantic model YAML
+-- Load data from Git repository
+-- ============================================================
+
+create or replace file format csv_format
+  type = csv
+  skip_header = 1
+  field_optionally_enclosed_by = '"';
+
+create or replace git repository sofi_db_si.financial.sofi_hol_repo
+  origin = 'https://github.com/aryeung0/SoFi_SnowflakeIntelligence_HOL.git'
+  api_integration = git_api_integration;
+
+alter git repository sofi_db_si.financial.sofi_hol_repo fetch;
+
+copy into products
+  from @sofi_db_si.financial.sofi_hol_repo/branches/main/data/products.csv
+  file_format = csv_format;
+
+copy into loan_originations
+  from @sofi_db_si.financial.sofi_hol_repo/branches/main/data/loan_originations.csv
+  file_format = csv_format;
+
+copy into loan_performance
+  from @sofi_db_si.financial.sofi_hol_repo/branches/main/data/loan_performance.csv
+  file_format = csv_format;
+
+copy into data_quality_metrics
+  from @sofi_db_si.financial.sofi_hol_repo/branches/main/data/data_quality_metrics.csv
+  file_format = csv_format;
+
+-- ============================================================
+-- Verify data loaded
+-- ============================================================
+
+select 'PRODUCTS' as tbl, count(*) as rows from products
+union all
+select 'LOAN_ORIGINATIONS', count(*) from loan_originations
+union all
+select 'LOAN_PERFORMANCE', count(*) from loan_performance
+union all
+select 'DATA_QUALITY_METRICS', count(*) from data_quality_metrics;
+
+-- ============================================================
+-- Stage for semantic model YAML (backup)
 -- ============================================================
 
 create or replace stage semantic_models encryption = (type = 'snowflake_sse') directory = ( enable = true );
@@ -135,6 +171,4 @@ def send_email(session, recipient_email, subject, body):
         return f"Error sending email: {str(e)}"
 $$;
 
-ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
-
-select 'Setup complete! Now load CSV data via Snowsight (see HOL guide Step 1).' as status;
+select 'Setup complete! All data loaded from Git repository.' as status;

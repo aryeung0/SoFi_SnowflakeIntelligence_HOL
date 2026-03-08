@@ -39,16 +39,64 @@ An Enterprise Intelligence Agent with 3 tools:
 
 ---
 
-## Step 1: Setup — Run SQL & Load CSV Data
+## Step 1: Setup — Bootstrap, Connect to Git & Load Data
 
-### 1a. Run the Setup Script
+### 1a. Bootstrap (Run Once in a Fresh Account)
+
+This creates the minimum objects needed before connecting to the Git repository.
 
 1. Log into your Snowflake trial account at [app.snowflake.com](https://app.snowflake.com)
-2. Click **+ > SQL Worksheet**
-3. Copy and paste the contents of **`setup.sql`** into the worksheet
-4. **Select all → Run** (execute all statements top to bottom)
+2. Click **+ → SQL Worksheet**
+3. Copy and paste the contents below into the worksheet and **Run All**:
 
-> **NOTE:** After running the setup, switch your role to **SNOWFLAKE_INTELLIGENCE_ADMIN** using the role selector in the bottom-left corner.
+```sql
+use role accountadmin;
+
+create or replace role snowflake_intelligence_admin;
+grant create warehouse on account to role snowflake_intelligence_admin;
+grant create database on account to role snowflake_intelligence_admin;
+grant create integration on account to role snowflake_intelligence_admin;
+
+set current_user = (select current_user());
+grant role snowflake_intelligence_admin to user identifier($current_user);
+alter user set default_role = snowflake_intelligence_admin;
+
+use role snowflake_intelligence_admin;
+create or replace warehouse sofi_wh_si with warehouse_size='large';
+alter user set default_warehouse = sofi_wh_si;
+
+use role accountadmin;
+
+create or replace api integration git_api_integration
+  api_provider = git_https_api
+  api_allowed_prefixes = ('https://github.com/aryeung0')
+  enabled = true;
+
+grant usage on integration git_api_integration to role snowflake_intelligence_admin;
+
+alter account set cortex_enabled_cross_region = 'AWS_US';
+```
+
+> This is also available as **`bootstrap.sql`** in the Git repo (for reference after connecting).
+
+### 1b. Create a Git-Enabled Workspace
+
+Now connect Snowflake to the HOL GitHub repository:
+
+1. In the left sidebar, navigate to **Projects → Workspaces**
+2. Click **+ → From Git repository**
+3. **Repository URL:** `https://github.com/aryeung0/SoFi_SnowflakeIntelligence_HOL.git`
+4. **API Integration:** Select **GIT_API_INTEGRATION**
+5. **Authentication:** Select **Public repository**
+6. Click **Create**
+
+You should now see the repository files in your workspace, including `setup.sql`, `data/` folder, and `risk_data_model.yaml`.
+
+### 1c. Run the Setup Script
+
+1. In the workspace file explorer, open **`setup.sql`**
+2. Make sure your role is set to **SNOWFLAKE_INTELLIGENCE_ADMIN** (bottom-left corner)
+3. **Run All** — this creates the database, tables, loads data from the Git repo, and sets up the email procedure
 
 ### What the setup creates:
 
@@ -61,40 +109,11 @@ An Enterprise Intelligence Agent with 3 tools:
 | Table | `LOAN_ORIGINATIONS` | Daily application, approval, denial, and funded amounts by region |
 | Table | `LOAN_PERFORMANCE` | Monthly delinquency snapshots (30/60/90+ DPD) by vintage |
 | Table | `DATA_QUALITY_METRICS` | Daily pipeline health: freshness, dbt test results, null rates |
-| Stage | `SEMANTIC_MODELS` | Stores the semantic model YAML |
+| Stage | `SEMANTIC_MODELS` | Stores the semantic model YAML (backup) |
 | Procedure | `SEND_EMAIL()` | Sends email via Snowflake notification |
+| Git Repo | `SOFI_HOL_REPO` | Connected to GitHub for data files |
 
-### 1b. Load CSV Data
-
-The setup script creates empty tables. Now load the data from CSV files:
-
-1. In the left sidebar, navigate to **Data → Databases → SOFI_DB_SI → FINANCIAL → Tables**
-2. For **each table below**, click the table name, then click **Load Data** (top right):
-
-| Table | CSV File |
-|-------|----------|
-| `PRODUCTS` | `products.csv` |
-| `LOAN_ORIGINATIONS` | `loan_originations.csv` |
-| `LOAN_PERFORMANCE` | `loan_performance.csv` |
-| `DATA_QUALITY_METRICS` | `data_quality_metrics.csv` |
-
-3. For each upload:
-   - Select warehouse: **SOFI_WH_SI**
-   - Click **Next**, then browse and select the CSV file
-   - File format: select **SOFI_CSVFORMAT** (or create with: skip header = 1, field optionally enclosed by = double quote)
-   - Click **Load**
-
-4. Verify the data loaded — run in a SQL worksheet:
-
-```sql
-select 'PRODUCTS' as tbl, count(*) as rows from sofi_db_si.financial.products
-union all
-select 'LOAN_ORIGINATIONS', count(*) from sofi_db_si.financial.loan_originations
-union all
-select 'LOAN_PERFORMANCE', count(*) from sofi_db_si.financial.loan_performance
-union all
-select 'DATA_QUALITY_METRICS', count(*) from sofi_db_si.financial.data_quality_metrics;
-```
+The last query in setup.sql verifies data loaded correctly:
 
 Expected: PRODUCTS = 12, LOAN_ORIGINATIONS ≈ 17,520, LOAN_PERFORMANCE ≈ 900, DATA_QUALITY_METRICS ≈ 910.
 
