@@ -41,6 +41,11 @@ create or replace api integration git_api_integration
 
 grant usage on integration git_api_integration to role snowflake_intelligence_admin;
 
+-- Snowflake Intelligence (agents) — system-managed database
+grant usage on database snowflake_intelligence to role snowflake_intelligence_admin;
+grant usage on schema snowflake_intelligence.agents to role snowflake_intelligence_admin;
+grant create agent on schema snowflake_intelligence.agents to role snowflake_intelligence_admin;
+
 -- Cross-region inference
 alter account set cortex_enabled_cross_region = 'AWS_US';
 

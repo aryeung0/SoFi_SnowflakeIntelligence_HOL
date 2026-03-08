@@ -8,7 +8,6 @@
 --
 -- Objects created:
 --   Database:   sofi_db_si (schema: financial)
---   Database:   snowflake_intelligence (schema: agents)
 --   Tables:     products, loan_originations, loan_performance, data_quality_metrics
 --   Stage:      semantic_models
 --   Procedure:  send_email
@@ -26,10 +25,6 @@ use role snowflake_intelligence_admin;
 create or replace database sofi_db_si;
 create or replace schema financial;
 
-create database if not exists snowflake_intelligence;
-create schema if not exists snowflake_intelligence.agents;
-
-grant create agent on schema snowflake_intelligence.agents to role snowflake_intelligence_admin;
 grant create semantic view on schema sofi_db_si.financial to role snowflake_intelligence_admin;
 
 use database sofi_db_si;
