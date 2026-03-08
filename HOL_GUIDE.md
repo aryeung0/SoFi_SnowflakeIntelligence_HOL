@@ -385,6 +385,7 @@ The agent compiles the findings from previous questions, then calls the SEND_EMA
 | HOL Concept | RDT Application |
 |-------------|-----------------|
 | Semantic view (AI-generated) | Build semantic views over your TDM tables for self-service analytics |
+| Git integration (Workspaces) | Connect your dbt repos and SQL scripts directly to Snowflake for version-controlled development |
 | Cortex Analyst | Enable Tableau users and leadership to ask questions in natural language |
 | Data Quality Metrics table | Monitor pipeline health, dbt test results, and freshness across your ~550 datasets |
 | Knowledge Extensions (CKE) | Attach Snowflake docs, regulatory guides, or internal wikis to your agents |
@@ -423,4 +424,5 @@ drop role if exists snowflake_intelligence_admin;
 - [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
 - [Semantic Model Specification](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec)
 - [Cortex Knowledge Extensions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-knowledge-extensions/cke-overview)
+- [Git Integration in Snowflake](https://docs.snowflake.com/en/developer-guide/git/git-overview)
 - [Data Metric Functions](https://docs.snowflake.com/en/user-guide/data-quality-intro)
