@@ -90,7 +90,7 @@ Now connect Snowflake to the HOL GitHub repository:
 5. **Authentication:** Select **Public repository**
 6. Click **Create**
 
-You should now see the repository files in your workspace, including `02_setup.sql`, `data/` folder, and `03_risk_data_model.yaml`.
+You should now see the repository files in your workspace, including `02_setup.sql`, `03_data/` folder, and `04_risk_data_model.yaml`.
 
 ### 1c. Run the Setup Script
 
@@ -203,7 +203,7 @@ If you need to catch up, you can create the semantic view from a YAML file inste
 
 1. Navigate to: **AI & ML → Cortex Analyst**
 2. Click **Create new** → **Upload YAML file**
-3. Upload **`03_risk_data_model.yaml`** (provided with course materials)
+3. Upload **`04_risk_data_model.yaml`** (provided with course materials)
 4. Click **Convert and save**
 
 This creates the same semantic view in one step, with all tables, relationships, and synonyms pre-configured.

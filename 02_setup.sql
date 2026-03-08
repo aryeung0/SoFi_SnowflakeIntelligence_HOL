@@ -98,19 +98,19 @@ create or replace git repository sofi_db_si.financial.sofi_hol_repo
 alter git repository sofi_db_si.financial.sofi_hol_repo fetch;
 
 copy into products
-  from @sofi_db_si.financial.sofi_hol_repo/branches/main/data/products.csv
+  from @sofi_db_si.financial.sofi_hol_repo/branches/main/03_data/products.csv
   file_format = csv_format;
 
 copy into loan_originations
-  from @sofi_db_si.financial.sofi_hol_repo/branches/main/data/loan_originations.csv
+  from @sofi_db_si.financial.sofi_hol_repo/branches/main/03_data/loan_originations.csv
   file_format = csv_format;
 
 copy into loan_performance
-  from @sofi_db_si.financial.sofi_hol_repo/branches/main/data/loan_performance.csv
+  from @sofi_db_si.financial.sofi_hol_repo/branches/main/03_data/loan_performance.csv
   file_format = csv_format;
 
 copy into data_quality_metrics
-  from @sofi_db_si.financial.sofi_hol_repo/branches/main/data/data_quality_metrics.csv
+  from @sofi_db_si.financial.sofi_hol_repo/branches/main/03_data/data_quality_metrics.csv
   file_format = csv_format;
 
 -- ============================================================
