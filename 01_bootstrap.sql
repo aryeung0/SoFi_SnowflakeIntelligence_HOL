@@ -28,7 +28,11 @@ alter user set default_role = snowflake_intelligence_admin;
 
 -- Warehouse (needed for Git operations)
 use role snowflake_intelligence_admin;
-create or replace warehouse sofi_wh_si with warehouse_size='large';
+create or replace warehouse sofi_wh_si
+  warehouse_size = 'small'
+  auto_suspend = 1800
+  auto_resume = true
+  initially_suspended = true;
 alter user set default_warehouse = sofi_wh_si;
 
 -- API integration for Git (requires ACCOUNTADMIN)
