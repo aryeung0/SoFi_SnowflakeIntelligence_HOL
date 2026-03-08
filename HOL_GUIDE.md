@@ -77,7 +77,7 @@ grant usage on integration git_api_integration to role snowflake_intelligence_ad
 alter account set cortex_enabled_cross_region = 'AWS_US';
 ```
 
-> This is also available as **`bootstrap.sql`** in the Git repo (for reference after connecting).
+> This is also available as **`01_bootstrap.sql`** in the Git repo (for reference after connecting).
 
 ### 1b. Create a Git-Enabled Workspace
 
@@ -90,11 +90,11 @@ Now connect Snowflake to the HOL GitHub repository:
 5. **Authentication:** Select **Public repository**
 6. Click **Create**
 
-You should now see the repository files in your workspace, including `setup.sql`, `data/` folder, and `risk_data_model.yaml`.
+You should now see the repository files in your workspace, including `02_setup.sql`, `data/` folder, and `03_risk_data_model.yaml`.
 
 ### 1c. Run the Setup Script
 
-1. In the workspace file explorer, open **`setup.sql`**
+1. In the workspace file explorer, open **`02_setup.sql`**
 2. Make sure your role is set to **SNOWFLAKE_INTELLIGENCE_ADMIN** (bottom-left corner)
 3. **Run All** — this creates the database, tables, loads data from the Git repo, and sets up the email procedure
 
@@ -113,7 +113,7 @@ You should now see the repository files in your workspace, including `setup.sql`
 | Procedure | `SEND_EMAIL()` | Sends email via Snowflake notification |
 | Git Repo | `SOFI_HOL_REPO` | Connected to GitHub for data files |
 
-The last query in setup.sql verifies data loaded correctly:
+The last query in 02_setup.sql verifies data loaded correctly:
 
 Expected: PRODUCTS = 12, LOAN_ORIGINATIONS ≈ 17,520, LOAN_PERFORMANCE ≈ 900, DATA_QUALITY_METRICS ≈ 910.
 
@@ -203,7 +203,7 @@ If you need to catch up, you can create the semantic view from a YAML file inste
 
 1. Navigate to: **AI & ML → Cortex Analyst**
 2. Click **Create new** → **Upload YAML file**
-3. Upload **`risk_data_model.yaml`** (provided with course materials)
+3. Upload **`03_risk_data_model.yaml`** (provided with course materials)
 4. Click **Convert and save**
 
 This creates the same semantic view in one step, with all tables, relationships, and synonyms pre-configured.

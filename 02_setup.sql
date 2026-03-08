@@ -4,7 +4,7 @@
 -- ============================================================
 --
 -- Run this from INSIDE the Git-enabled workspace.
--- Prerequisite: bootstrap.sql has already been run.
+-- Prerequisite: 01_bootstrap.sql has already been run.
 --
 -- Objects created:
 --   Database:   sofi_db_si (schema: financial)

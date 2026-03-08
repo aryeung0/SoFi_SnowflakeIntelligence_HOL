@@ -11,7 +11,7 @@
 --   1. Go to Projects → Workspaces
 --   2. Select "From Git repository"
 --   3. Paste the repo URL and select the API integration
---   4. Then run setup.sql from inside the workspace
+--   4. Then run 02_setup.sql from inside the workspace
 -- ============================================================
 
 use role accountadmin;

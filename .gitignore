@@ -1,7 +1,12 @@
 gen_docx.py
 HOL_GUIDE.docx
+~$*.docx
 FACILITATOR_SCRIPT.md
 prompt.md
 *.pyc
 __pycache__/
 .DS_Store
+/products.csv
+/loan_originations.csv
+/loan_performance.csv
+/data_quality_metrics.csv

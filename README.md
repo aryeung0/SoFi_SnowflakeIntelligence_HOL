@@ -14,9 +14,9 @@ An Enterprise Intelligence Agent (**Risk Data // AI**) with 3 tools:
 
 | File | Description |
 |------|-------------|
-| `bootstrap.sql` | Run first in a fresh SQL worksheet — creates role, warehouse, and Git API integration |
-| `setup.sql` | Run from the Git workspace — creates database, tables, loads data, and sets up email procedure |
-| `risk_data_model.yaml` | Semantic model backup (YAML) — use if you skip the UI-based semantic view creation |
+| `01_bootstrap.sql` | Run first in a fresh SQL worksheet — creates role, warehouse, and Git API integration |
+| `02_setup.sql` | Run from the Git workspace — creates database, tables, loads data, and sets up email procedure |
+| `03_risk_data_model.yaml` | Semantic model backup (YAML) — use if you skip the UI-based semantic view creation |
 | `data/products.csv` | 12 financial products with risk tier classifications |
 | `data/loan_originations.csv` | Daily application volume, approvals, denials, funded amounts by region |
 | `data/loan_performance.csv` | Monthly delinquency snapshots (30/60/90+ DPD) by vintage |
@@ -27,7 +27,7 @@ An Enterprise Intelligence Agent (**Risk Data // AI**) with 3 tools:
 1. Open your Snowflake trial account
 2. Run the bootstrap SQL from the guide (creates role, warehouse, Git integration)
 3. Create a **Git-enabled Workspace**: Projects → Workspaces → From Git repository → paste this repo URL
-4. Open and run **`setup.sql`** from inside the workspace
+4. Open and run **`02_setup.sql`** from inside the workspace
 5. Follow the rest of the step-by-step guide in **[HOL_GUIDE.md](HOL_GUIDE.md)**
 
 ### Prerequisites
