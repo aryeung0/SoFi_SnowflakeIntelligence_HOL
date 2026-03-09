@@ -118,7 +118,7 @@ copy into data_quality_metrics
 -- Verify data loaded
 -- ============================================================
 
-select 'PRODUCTS' as tbl, count(*) as rows from products
+select 'PRODUCTS' as tbl, count(*) as row_count from products
 union all
 select 'LOAN_ORIGINATIONS', count(*) from loan_originations
 union all

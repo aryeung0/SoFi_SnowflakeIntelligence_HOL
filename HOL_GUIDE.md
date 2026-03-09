@@ -122,7 +122,7 @@ The last query in 02_setup.sql verifies data loaded correctly:
 
 Expected output:
 
-| TBL | ROWS |
+| TBL | ROW_COUNT |
 |-----|------|
 | PRODUCTS | 12 |
 | LOAN_ORIGINATIONS | 17,520 |
