@@ -115,18 +115,6 @@ copy into data_quality_metrics
   file_format = csv_format;
 
 -- ============================================================
--- Verify data loaded
--- ============================================================
-
-select 'PRODUCTS' as tbl, count(*) as row_count from products
-union all
-select 'LOAN_ORIGINATIONS', count(*) from loan_originations
-union all
-select 'LOAN_PERFORMANCE', count(*) from loan_performance
-union all
-select 'DATA_QUALITY_METRICS', count(*) from data_quality_metrics;
-
--- ============================================================
 -- Stage for semantic model YAML (backup)
 -- ============================================================
 
@@ -172,4 +160,14 @@ def send_email(session, recipient_email, subject, body):
         return f"Error sending email: {str(e)}"
 $$;
 
-select 'Setup complete! All data loaded from Git repository.' as status;
+-- ============================================================
+-- Verify data loaded
+-- ============================================================
+
+select 'PRODUCTS' as tbl, count(*) as row_count from products
+union all
+select 'LOAN_ORIGINATIONS', count(*) from loan_originations
+union all
+select 'LOAN_PERFORMANCE', count(*) from loan_performance
+union all
+select 'DATA_QUALITY_METRICS', count(*) from data_quality_metrics;
