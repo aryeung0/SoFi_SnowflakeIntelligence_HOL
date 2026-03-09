@@ -81,8 +81,6 @@ grant usage on integration git_api_integration to role snowflake_intelligence_ad
 grant usage on database snowflake_intelligence to role snowflake_intelligence_admin;
 grant usage on schema snowflake_intelligence.agents to role snowflake_intelligence_admin;
 grant create agent on schema snowflake_intelligence.agents to role snowflake_intelligence_admin;
-
-alter account set cortex_enabled_cross_region = 'AWS_US';
 ```
 
 > This is also available as **`01_bootstrap.sql`** in the Git repo (for reference after connecting).

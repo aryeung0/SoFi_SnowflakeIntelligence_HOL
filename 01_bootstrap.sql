@@ -50,7 +50,4 @@ grant usage on database snowflake_intelligence to role snowflake_intelligence_ad
 grant usage on schema snowflake_intelligence.agents to role snowflake_intelligence_admin;
 grant create agent on schema snowflake_intelligence.agents to role snowflake_intelligence_admin;
 
--- Cross-region inference
-alter account set cortex_enabled_cross_region = 'AWS_US';
-
 select 'Bootstrap complete! Now create a Git workspace (see HOL guide Step 1b).' as status;
