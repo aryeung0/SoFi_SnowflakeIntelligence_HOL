@@ -171,3 +171,30 @@ union all
 select 'LOAN_PERFORMANCE', count(*) from loan_performance
 union all
 select 'DATA_QUALITY_METRICS', count(*) from data_quality_metrics;
+
+-- ============================================================
+-- RELOAD DATA ONLY (run this section if you need to refresh
+-- data without dropping the database/semantic view)
+-- ============================================================
+-- alter git repository sofi_db_si.financial.sofi_hol_repo fetch;
+--
+-- truncate table products;
+-- truncate table loan_originations;
+-- truncate table loan_performance;
+-- truncate table data_quality_metrics;
+--
+-- create or replace stage sofi_data encryption = (type = 'snowflake_sse');
+--
+-- copy files into @sofi_data
+--   from @sofi_db_si.financial.sofi_hol_repo/branches/main/03_data/
+--   pattern = '.*\.csv';
+--
+-- copy into products from @sofi_data/products.csv file_format = csv_format;
+-- copy into loan_originations from @sofi_data/loan_originations.csv file_format = csv_format;
+-- copy into loan_performance from @sofi_data/loan_performance.csv file_format = csv_format;
+-- copy into data_quality_metrics from @sofi_data/data_quality_metrics.csv file_format = csv_format;
+--
+-- select 'PRODUCTS' as tbl, count(*) as row_count from products
+-- union all select 'LOAN_ORIGINATIONS', count(*) from loan_originations
+-- union all select 'LOAN_PERFORMANCE', count(*) from loan_performance
+-- union all select 'DATA_QUALITY_METRICS', count(*) from data_quality_metrics;
