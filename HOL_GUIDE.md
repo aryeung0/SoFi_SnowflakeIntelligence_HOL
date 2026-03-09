@@ -163,23 +163,25 @@ Cortex Analyst enables the agent to query structured data by generating SQL. It 
 
 > **Why this matters:** These SQL queries teach the AI-assisted generator how your tables join and what kinds of questions users will ask. This significantly improves the quality of auto-generated descriptions and relationships.
 
+9. Click **Next**
+
 ### Select Tables & Columns
 
-9. Under **Select tables**, add all 4 tables from **SOFI_DB_SI.FINANCIAL**:
+10. Under **Select tables**, switch to the **All** tab to see all available tables, then select all 4 tables from **SOFI_DB_SI.FINANCIAL**:
    - `PRODUCTS`
    - `LOAN_ORIGINATIONS`
    - `LOAN_PERFORMANCE`
    - `DATA_QUALITY_METRICS`
 
-10. Click **Next**
+11. Click **Next**
 
-11. Under **Select columns**, select **all columns** for each table (we're under the 50-column recommendation)
+12. Under **Select columns**, select **all columns** for each table (we're under the 50-column recommendation)
 
-12. Check **Add sample values** ✅ — this helps Cortex Analyst understand your data values (e.g., region names, product categories, risk tiers)
+13. Check **Add sample values** ✅ — this helps Cortex Analyst understand your data values (e.g., region names, product categories, risk tiers)
 
-13. Check **Add AI-generated descriptions** ✅ — the AI will generate business-friendly descriptions for each column based on names and sample values
+14. Check **Add AI-generated descriptions** ✅ — the AI will generate business-friendly descriptions for each column based on names and sample values
 
-14. Click **Create and save**
+15. Click **Create and save**
 
 > The generator will take 1–2 minutes. You'll see a progress indicator showing the steps: extracting metadata, generating descriptions, identifying relationships, and creating verified query suggestions.
 
@@ -187,16 +189,16 @@ Cortex Analyst enables the agent to query structured data by generating SQL. It 
 
 Once the semantic view is created, you can fine-tune it:
 
-15. Click on the semantic view to open it
-16. Under **Relationships**, verify that these relationships were auto-detected (add them if not):
+16. Click on the semantic view to open it
+17. Under **Relationships**, verify that these relationships were auto-detected (add them if not):
     - `LOAN_ORIGINATIONS.PRODUCT_ID` → `PRODUCTS.PRODUCT_ID` (many-to-one)
     - `LOAN_PERFORMANCE.PRODUCT_ID` → `PRODUCTS.PRODUCT_ID` (many-to-one)
 
-17. Under each logical table, review the **Synonyms** — add any missing ones:
+18. Under each logical table, review the **Synonyms** — add any missing ones:
     - LOAN_PERFORMANCE: `delinquency` → DPD columns, `exposure` → OUTSTANDING_BALANCE
     - DATA_QUALITY_METRICS: `staleness` → FRESHNESS_HOURS, `pipeline health` → dbt test columns
 
-18. Click **Save**
+19. Click **Save**
 
 ### What does the semantic view cover?
 
