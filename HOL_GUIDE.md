@@ -62,7 +62,11 @@ grant role snowflake_intelligence_admin to user identifier($current_user);
 alter user set default_role = snowflake_intelligence_admin;
 
 use role snowflake_intelligence_admin;
-create or replace warehouse sofi_wh_si with warehouse_size='large';
+create or replace warehouse sofi_wh_si
+  warehouse_size = 'small'
+  auto_suspend = 1800
+  auto_resume = true
+  initially_suspended = true;
 alter user set default_warehouse = sofi_wh_si;
 
 use role accountadmin;
@@ -73,6 +77,10 @@ create or replace api integration git_api_integration
   enabled = true;
 
 grant usage on integration git_api_integration to role snowflake_intelligence_admin;
+
+grant usage on database snowflake_intelligence to role snowflake_intelligence_admin;
+grant usage on schema snowflake_intelligence.agents to role snowflake_intelligence_admin;
+grant create agent on schema snowflake_intelligence.agents to role snowflake_intelligence_admin;
 
 alter account set cortex_enabled_cross_region = 'AWS_US';
 ```
@@ -92,11 +100,10 @@ Now connect Snowflake to the HOL GitHub repository:
 
 You should now see the repository files in your workspace, including `02_setup.sql`, `03_data/` folder, and `04_risk_data_model.yaml`.
 
-### 1c. Run the Setup Script
+## Step 2: Run the Setup Script
 
 1. In the workspace file explorer, open **`02_setup.sql`**
-2. Make sure your role is set to **SNOWFLAKE_INTELLIGENCE_ADMIN** (bottom-left corner)
-3. **Run All** — this creates the database, tables, loads data from the Git repo, and sets up the email procedure
+2. **Run All** — this creates the database, tables, loads data from the Git repo, and sets up the email procedure
 
 ### What the setup creates:
 
@@ -115,11 +122,18 @@ You should now see the repository files in your workspace, including `02_setup.s
 
 The last query in 02_setup.sql verifies data loaded correctly:
 
-Expected: PRODUCTS = 12, LOAN_ORIGINATIONS ≈ 17,520, LOAN_PERFORMANCE ≈ 900, DATA_QUALITY_METRICS ≈ 910.
+Expected output:
+
+| TBL | ROWS |
+|-----|------|
+| PRODUCTS | 12 |
+| LOAN_ORIGINATIONS | 17,520 |
+| LOAN_PERFORMANCE | 900 |
+| DATA_QUALITY_METRICS | 910 |
 
 ---
 
-## Step 2: Configure Cortex Analyst (Structured Data)
+## Step 3: Configure Cortex Analyst (Structured Data)
 
 Cortex Analyst enables the agent to query structured data by generating SQL. It uses a **semantic view** — a schema-level object that maps business concepts to your physical tables and columns. We'll create one using the AI-assisted generator in Snowsight.
 
@@ -140,7 +154,7 @@ Cortex Analyst enables the agent to query structured data by generating SQL. It 
 
 7. Click **Next**
 
-### Add Context (Optional — recommended)
+### Add Context
 
 8. Under **SQL Queries**, add these example question/SQL pairs to help the AI understand your data:
 
@@ -149,7 +163,7 @@ Cortex Analyst enables the agent to query structured data by generating SQL. It 
    | What is the trend in personal loan originations? | `SELECT o.date, SUM(o.funded_amount) as total_funded FROM sofi_db_si.financial.loan_originations o JOIN sofi_db_si.financial.products p ON o.product_id = p.product_id WHERE p.category = 'Personal Loans' GROUP BY o.date ORDER BY o.date` |
    | Which product has the highest 90+ day delinquency rate? | `SELECT p.product_name, SUM(lp.dpd_90_plus) as total_90plus, SUM(lp.current_count + lp.dpd_30 + lp.dpd_60 + lp.dpd_90_plus) as total_loans FROM sofi_db_si.financial.loan_performance lp JOIN sofi_db_si.financial.products p ON lp.product_id = p.product_id GROUP BY p.product_name ORDER BY total_90plus DESC` |
 
-> **Tip:** These SQL queries help the AI-assisted generator understand how your tables join and what kinds of questions users will ask. You can skip this if short on time — the generator will still work.
+> **Why this matters:** These SQL queries teach the AI-assisted generator how your tables join and what kinds of questions users will ask. This significantly improves the quality of auto-generated descriptions and relationships.
 
 ### Select Tables & Columns
 
@@ -210,7 +224,7 @@ This creates the same semantic view in one step, with all tables, relationships,
 
 ---
 
-## Step 3: Add Snowflake Documentation Knowledge Extension (Marketplace)
+## Step 4: Add Snowflake Documentation Knowledge Extension (Marketplace)
 
 Cortex Knowledge Extensions (CKEs) are pre-built search services from the Snowflake Marketplace. The **Snowflake Documentation** CKE gives your agent access to the complete official Snowflake docs.
 
@@ -231,7 +245,7 @@ GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_DOCUMENTATION TO ROLE SNOWFLAKE_
 
 ---
 
-## Step 4: Create the Agent
+## Step 5: Create the Agent
 
 1. Navigate to: **AI & ML → Agents** (left menu)
 2. Click **Create agent** (top right)
@@ -302,7 +316,7 @@ Whenever you can answer visually with a chart, always choose to generate a chart
 
 ---
 
-## Step 5: Try It Out!
+## Step 6: Try It Out!
 
 Open [Snowflake Intelligence](https://ai.snowflake.com) and ensure:
 - Role: **SNOWFLAKE_INTELLIGENCE_ADMIN**
