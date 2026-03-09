@@ -125,9 +125,9 @@ Expected output:
 | TBL | ROW_COUNT |
 |-----|------|
 | PRODUCTS | 12 |
-| LOAN_ORIGINATIONS | 17,527 |
-| LOAN_PERFORMANCE | 900 |
-| DATA_QUALITY_METRICS | 1,810 |
+| LOAN_ORIGINATIONS | 29,231 |
+| LOAN_PERFORMANCE | 2,244 |
+| DATA_QUALITY_METRICS | 4,240 |
 
 ---
 
@@ -326,30 +326,30 @@ Open [Snowflake Intelligence](https://ai.snowflake.com) and ensure:
 ### Q1: Portfolio Trends (Business Stakeholder)
 > **"What is the trend in personal loan originations over the last 6 months?"**
 
-The agent uses Cortex Analyst to generate SQL against LOAN_ORIGINATIONS joined with PRODUCTS, then visualizes the results as a chart. You should see a dip in Q1 2025 for personal loans.
+The agent uses Cortex Analyst to generate SQL against LOAN_ORIGINATIONS joined with PRODUCTS, then visualizes the results as a chart. Data covers July 2024 through February 2026.
 
 ### Q2: Risk Analysis (Business Stakeholder)
 > **"Which product has the highest 90+ day delinquency rate?"**
 
-The agent queries LOAN_PERFORMANCE, calculates delinquency rates, and surfaces that subprime products have the highest 90+ DPD rates. Note: some Credit Card rows in the June snapshot have impossible DPD values (counts exceeding total loans) — this is a known data quality issue in the dataset.
+The agent queries LOAN_PERFORMANCE, calculates delinquency rates, and surfaces that subprime products have the highest 90+ DPD rates. Note: some rows in the June and December 2025 snapshots have impossible DPD values (counts exceeding total loans) — this is a known data quality issue in the dataset.
 
 ### Q3: Data Quality — Pipeline Health (RDT Internal)
 > **"Which tables had dbt test failures in the last 30 days and what are their null rates?"**
 
 The agent queries DATA_QUALITY_METRICS and surfaces several issues:
 - **COLLATERAL_VALUATIONS** has chronic test failures (~35% of days)
-- **BORROWER_PROFILES** had a null rate spike to 8-10% starting May 20 (after a schema change), still elevated in June
-- **LOAN_ORIGINATIONS** had dbt failures on Feb 15 (duplicate rows from a pipeline re-run) and elevated null rates in March-April
-- **LOAN_PERFORMANCE** had null rate spikes in April and test failures in June
+- **BORROWER_PROFILES** had a null rate spike to 8-10% starting Oct 15 (after a schema change), elevated through November 2025
+- **LOAN_ORIGINATIONS** had dbt failures on Oct 15 (duplicate rows from a pipeline re-run)
+- **LOAN_PERFORMANCE** went stale Jan 10-12, 2026 (72+ hours, with test failures)
 
 ### Q4: Data Quality — Digging Into the Data (RDT Internal)
 > **"Are there any null values in the LOAN_ORIGINATIONS region column? Show me when they occurred."**
 
-The agent queries the actual LOAN_ORIGINATIONS table and finds ~293 rows with null regions, concentrated in March-April 2025. This is a real data defect — the agent can surface it directly from the source data, not just the metrics table.
+The agent queries the actual LOAN_ORIGINATIONS table and finds rows with null regions, concentrated in March-April 2025 (~293 rows) and August-September 2025 (~28 rows). This is a real data defect — the agent can surface it directly from the source data, not just the metrics table.
 
 > **Follow-up:** *"Are there any rows in LOAN_PERFORMANCE where the DPD counts exceed the total number of loans?"*
 
-The agent finds ~8 rows in the June 2025 snapshot for Credit Cards where DPD_30 and DPD_60 exceed total loans — an impossible condition indicating a data pipeline bug.
+The agent finds rows where DPD_30 and DPD_60 exceed total loans — in the June 2025 and December 2025 snapshots — an impossible condition indicating a data pipeline bug.
 
 ### Q5: Snowflake Documentation (Knowledge Extension)
 > **"How do I create a dynamic table in Snowflake?"**
@@ -374,10 +374,10 @@ The agent compiles the findings from previous questions, then calls the SEND_EMA
 - *"Which region has the highest denial rate?"*
 
 **Data Quality deep-dives:**
-- *"Are there any negative funded amounts in the loan originations table?"* (finds 7 rows in May 2025)
-- *"Are there duplicate rows in loan originations on February 15?"* (finds 7 dupes from pipeline re-run)
-- *"Show me rows in loan performance where outstanding balance is zero but delinquency counts are not."* (finds 16 stale records in Feb 2025, 2022 vintages)
-- *"When did the LOAN_PERFORMANCE table go stale in May? How long was it down?"* (72+ hours, May 12-14)
+- *"Are there any negative funded amounts in the loan originations table?"* (finds rows in May 2025 and November 2025)
+- *"Are there duplicate rows in loan originations?"* (finds 7 dupes on Feb 15 and 7 dupes on Oct 15 from pipeline re-runs)
+- *"Show me rows in loan performance where outstanding balance is zero but delinquency counts are not."* (finds stale records in Feb 2025 and Aug 2025, 2022 vintages)
+- *"When did the LOAN_PERFORMANCE table go stale in January 2026? How long was it down?"* (72+ hours, Jan 10-12)
 
 **RDT Pipeline Monitoring:**
 - *"Is the LOAN_PERFORMANCE table fresh? When was it last updated?"*
