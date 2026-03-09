@@ -137,7 +137,7 @@ Cortex Analyst enables the agent to query structured data by generating SQL. It 
 
 ### Create the Semantic View
 
-1. Navigate to: **AI & ML → Cortex Analyst** (left menu)
+1. Navigate to: **AI & ML → Analyst** (left menu)
 2. Confirm role is set to **SNOWFLAKE_INTELLIGENCE_ADMIN**
 3. Click **Create new** → **Create new Semantic View**
 4. **Location:** Select **SOFI_DB_SI → FINANCIAL**
@@ -213,7 +213,7 @@ The AI-generated descriptions and sample values help Cortex Analyst understand r
 
 If you need to catch up, you can create the semantic view from a YAML file instead:
 
-1. Navigate to: **AI & ML → Cortex Analyst**
+1. Navigate to: **AI & ML → Analyst**
 2. Click **Create new** → **Upload YAML file**
 3. Upload **`04_risk_data_model.yaml`** (provided with course materials)
 4. Click **Convert and save**

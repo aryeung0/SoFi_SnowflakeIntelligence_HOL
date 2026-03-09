@@ -29,7 +29,7 @@ An Enterprise Intelligence Agent (**Risk Data // AI**) with 3 tools:
 | 1a | Bootstrap | Paste the bootstrap SQL into a fresh worksheet → Run All |
 | 1b | Connect to Git | Projects → Workspaces → From Git repository → paste this repo URL |
 | 1c | Setup & Load Data | Open **`02_setup.sql`** in the workspace → Run All (loads data from Git — no CSV uploads) |
-| 2 | Semantic View | AI & ML → Cortex Analyst → Create new Semantic View (or upload `04_risk_data_model.yaml` as backup) |
+| 2 | Semantic View | AI & ML → Analyst → Create new Semantic View (or upload `04_risk_data_model.yaml` as backup) |
 | 3 | Knowledge Extension | Marketplace → Get "Snowflake Documentation" → Grant privileges |
 | 4 | Create Agent | AI & ML → Agents → Create agent with 3 tools |
 | 5 | Try It Out | Ask questions at [ai.snowflake.com](https://ai.snowflake.com) |
